@@ -1,0 +1,30 @@
+{
+  "name": "api.wallet.cryptocurve",
+  "version": "1.0.0",
+  "engines": {
+    "node": "0.12.7"
+  },
+  "description": "API for api.wallet.cryptocurve whitelist.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node api.wallet.cryptocurve.js"
+  },
+  "author": "suchi.blackwing@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "aes256": "^1.0.3",
+    "bip39": "^2.5.0",
+    "body-parser": "^1.17.2",
+    "compression": "^1.7.0",
+    "crypto-browserify": "^3.12.0",
+    "express": "^4.15.4",
+    "helmet": "^1.3.0",
+    "http-auth": "^2.4.11",
+    "moment": "^2.18.1",
+    "morgan": "^1.8.2",
+    "nodemailer": "^4.6.3",
+    "nodemailer-smtp-transport": "^2.7.4",
+    "pg-promise": "^3.9.1",
+    "sha256": "^0.2.0"
+  }
+}
