@@ -1,18 +1,18 @@
 branch-defaults:
   master:
-    environment: cryptoreviewsapi
+    environment: apiwalletcryptocurve-dev
     group_suffix: null
 global:
-  application_name: cryptoreviews.api
+  application_name: api.wallet.cryptocurve
   branch: null
   default_ec2_keyname: null
   default_platform: node.js
-  default_region: eu-west-1
+  default_region: us-west-2
   include_git_submodules: true
   instance_profile: null
   platform_name: null
   platform_version: null
-  profile: eb-cli
+  profile: cryptocurve
   repository: null
   sc: git
   workspace_type: Application
