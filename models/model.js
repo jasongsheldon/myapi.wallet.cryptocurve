@@ -1,12 +1,14 @@
+const { sha3 } = require('ethereumjs-util');
+
 const db = require('../helpers/db.js').db
 const emailer = require('../helpers/emailer.js')
 const aes256 = require('aes256')
 const bip39 = require('bip39')
 const sha256 = require('sha256')
 const crypto = require('crypto-browserify')
-
 const isEthereumAddress  = require('is-ethereum-address');
 const email = require("email-validator");
+
 
 
 String.prototype.hexEncode = function(){
@@ -27,6 +29,46 @@ String.prototype.hexDecode = function(){
     }
 
     return back;
+}
+
+function isValidWANAddress(address) {
+  if (address === '0x0000000000000000000000000000000000000000') {
+    return false;
+  }
+  if (address.substring(0, 2) !== '0x') {
+    return false;
+  } else if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
+    return false;
+    /*} else if (/^(0x)?[0-9a-f]{40}$/.test(address) || /^(0x)?[0-9A-F]{40}$/.test(address)) {
+    return true;*/
+  } else {
+    return isWanChecksumAddress(address);
+  }
+}
+
+function isWanChecksumAddress(address) {
+  return address === toChecksumWaddress(address);
+}
+
+function toChecksumWaddress(address) {
+  /* stripHexPrefix */
+  if (typeof address !== 'string') {
+    return false;
+  }
+  address = address.slice(0, 2) === '0x' ? address.slice(2) : address;
+  address = address.toLowerCase();
+  /* toChecksumWaddress */
+  const hash = sha3(address).toString('hex');
+  let ret = '0x';
+
+  for (let i = 0; i < address.length; i++) {
+    if (parseInt(hash[i], 16) < 8) {
+      ret += address[i].toUpperCase();
+    } else {
+      ret += address[i];
+    }
+  }
+  return ret;
 }
 
 function decrypt(text,seed){
@@ -73,7 +115,7 @@ const model = {
         res.body = { 'status': 501, 'success': false, 'message': ex }
         return next(null, req, res, next)
       }
-      
+
       if (!email.validate(data.emailAddress)) {
         res.status(501)
         res.body = { 'status': 501, 'success': false, 'message': 'Invalid email address provided' }
@@ -84,8 +126,8 @@ const model = {
         res.body = { 'status': 501, 'success': false, 'message': 'Invalid ethereum address provided' }
         return next(null, req, res, next)
       }
-      
-      if (!isEthereumAddress(data.wanchainAddress)) {
+
+      if (!isValidWANAddress(data.wanchainAddress)) {
         res.status(501)
         res.body = { 'status': 501, 'success': false, 'message': 'Invalid wanchain address provided' }
         return next(null, req, res, next)
