@@ -5,6 +5,10 @@ const bip39 = require('bip39')
 const sha256 = require('sha256')
 const crypto = require('crypto-browserify')
 
+const isEthereumAddress  = require('is-ethereum-address');
+const email = require("email-validator");
+
+
 String.prototype.hexEncode = function(){
     var hex, i;
     var result = "";
@@ -69,15 +73,32 @@ const model = {
         res.body = { 'status': 501, 'success': false, 'message': ex }
         return next(null, req, res, next)
       }
+      
+      if (!email.validate(data.emailAddress)) {
+        res.status(501)
+        res.body = { 'status': 501, 'success': false, 'message': 'Invalid email address provided' }
+        return next(null, req, res, next)
+      }
+      if (!isEthereumAddress(data.ethereumAddress)) {
+        res.status(501)
+        res.body = { 'status': 501, 'success': false, 'message': 'Invalid ethereum address provided' }
+        return next(null, req, res, next)
+      }
+      
+      if (!isEthereumAddress(data.wanchainAddress)) {
+        res.status(501)
+        res.body = { 'status': 501, 'success': false, 'message': 'Invalid wanchain address provided' }
+        return next(null, req, res, next)
+      }
 
-      /*db.none('insert into cryptoreviews (uuid, cryptoname, score, json, created) values (md5(random()::text || clock_timestamp()::text)::uuid, $1, $2, $3, NOW());',
-      [data.cryptoName, metricPercentage, JSON.stringify(data)])
+      db.none('insert into PresaleWhitelistParticipants (uuid, emailAddress, ethereumAddress, wanchainAddress, json, created) values (md5(random()::text || clock_timestamp()::text)::uuid, $1, $2, $3, $4, NOW());',
+      [data.emailAddress, data.ethereumAddress, data.wanchainAddress, JSON.stringify(data)])
       .then(function() {
-        console.log(data.cryptoName)
+        console.log(data.emailAddress)
       })
       .catch(function(err) {
         console.log(err)
-      })*/
+      })
 
       const signJson = JSON.stringify(data);
       const signMnemonic = bip39.generateMnemonic();

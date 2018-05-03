@@ -1,9 +1,9 @@
 var config = {
 
-  host: 'datariver.crqq48eyyzrf.eu-west-1.rds.amazonaws.com',
-  database: 'cryptocurrency',
-  user: 'postgres',
-  password: 'ert123iop123ert',
+  host: 'cryptocurvepostgres.cfytsjuclasa.us-east-2.rds.amazonaws.com',
+  database: 'CryptoCurveDev',
+  user: 'whitelistpresale',
+  password: 'wh1t3l1st!@#JKL!@#',
 }
 
 module.exports = config
