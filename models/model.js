@@ -12,6 +12,9 @@ const sha256 = require('sha256')
 const crypto = require('crypto-browserify')
 const isEthereumAddress  = require('is-ethereum-address')
 const email = require("email-validator")
+
+
+
 const emailHTML = "<!DOCTYPE html PUBLIC ' -//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><html xmlns='http://www.w3.org/1999/xhtml'>  <head>    <title>CryptoCurve</title>    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>    <meta name='viewport' content='width=device-width'>  </head>  <body style='padding:0px;margin:0px;'>    <table style='height: 100%; width: 100%; background-color: #f1f1f2;' align='center'>      <tbody>        <tr>          <td valign='top' style='padding-top:30px;padding-bottom:30px;background-color:#f1f1f2;width:100%;height:100%;'>            <!--[if (gte mso 9)|(IE)]><table style='width:600px' width='600' align='center' cellpadding='0' cellspacing='0' border='0'><tr><td><![endif]-->            <table align='center' border='0' cellpadding='0' cellspacing='0' style='max-width:600px;box-sizing:border-box;width:100%;'>              <tbody>                <tr>                  <td valign='top' align='center' style='background-color:#ffffff;text-align:center;'>                    <!--[if (gte mso 9)|(IE)]><table width='100%' align='center' cellpadding='0' cellspacing='0' border='0'><tr><td><![endif]-->                    <table border='0' cellspacing='0' cellpadding='0' style='background-color:#000000;color:#ffffff'>                      <tbody>                        <tr>                          <td style='text-align:center;background-color:#000000;color:#ffffff;font-weight:bold;font-size:25px'>                            <img style='max-width:600px;width:100%;font-family:Helvetica,Arial,sans-serif;font-size:25px;' width='600' alt='CryptoCurve' src='http://www.eventcloud.co/img/cryptocurve-mail-header.jpg'>                          </td>                        </tr>                      </tbody>                    </table>                    <!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]-->                  </td>                </tr>                <tr>                  <td valign='top' style='background-color: #ffffff'>                    <!--[if (gte mso 9)|(IE)]><table width='100%' align='center' cellpadding='0' cellspacing='0' border='0'><tr><td><![endif]-->                    <table border='0' cellspacing='0' cellpadding='20' style='border-collapse:collapse;width:100%'>                      <tbody>                        <tr>                          <td valign='top' style='font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#2b3c4f;padding-left:20px;padding-right:20px;'>                            <p style='margin:0px;padding:0px;'>                              <span style='font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#2b3c4f'>                                <strong>                                  Awesome!                                </strong>                              </span>                            </p>                            <br/>                            <p style='margin:0px;padding:0px;'>                              <span style='font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#2b3c4f'>                                Thank you for joining the CryptoCurve whitelist.                                <br/><br/>                                We will keep in contact with you via your submitted email address:                                <br/><br/>                                <strong>{{ email }}</strong>                                <br/><br/>                                All you need to do, is send Eth to the address below:                                <br/>                              </span>                            </p>                            <p style='padding-top:20px;padding-bottom:20px;margin-top:30px;margin-bottom:30px;text-align:center; border:1px solid #2b3c4f'>                              <span style='font-family:Helvetica,Arial,sans-serif;font-size:20px;color:#2b3c4f;font-weight:bold;text-align:center;'>                                {{code}}                              </span>                            </p>                            <p style='margin:0px;padding:0px;'>                              <span style='font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#2b3c4f'>                                Enjoy,<br/>                                <strong>The CryptoCurve Team</strong>                              </span>                            </p>                          </td>                        </tr>                      </tbody>                    </table>                    <!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]-->                  </td>                </tr>                <tr>                  <td valign='top' align='center' style='background-color:#000000;'>                    <!--[if (gte mso 9)|(IE)]><table width='100%' align='center' cellpadding='0' cellspacing='0' border='0'><tr><td valign='top'><![endif]-->                    <table border='0' cellpadding='0' cellspacing='0' align='center' style='margin:0 auto; padding-top:10px'>                      <tbody>                        <tr>                          <td>                            <!--[if mso]><table align='center' border='0' cellspacing='0' cellpadding='0'><tr><td align='center' valign='top'><![endif]-->                            <table align='left' border='0' cellpadding='0' cellspacing='0'>                              <tbody>                                <tr>                                  <td align='center' valign='middle' style='padding-top:5px;padding-bottom:5px;padding-left:5px;padding-right:5px'>                                    <span style='font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#ffffff'>                                      <a href='#' style='font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#ffffff;text-decoration: none'>                                        cryptocurve.io                                      </a>                                    </span>                                  </td>                                </tr>                              </tbody>                            </table>                            <!--[if mso]></td><td align='center' valign='top'><![endif]-->                            <table align='left' border='0' cellpadding='0' cellspacing='0'>                              <tbody>                                <tr>                                  <td align='center' valign='middle' style='padding-top:5px;padding-bottom:5px;padding-left:5px;padding-right:5px'>                                    <span style='font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#ffffff'>                                      <a href='#' style='font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#ffffff;text-decoration: none'>                                        cryptocurve.network                                      </a>                                    </span>                                  </td>                                </tr>                              </tbody>                            </table>                            <!--[if mso]></td><td align='center' valign='top'><![endif]-->                            <table align='left' border='0' cellpadding='0' cellspacing='0'>                              <tbody>                                <tr>                                  <td align='center' valign='middle' style='padding-top:5px;padding-bottom:5px;padding-left:5px;padding-right:5px'>                                    <span style='font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#ffffff'>                                      <a href='#' style='font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#ffffff;text-decoration: none'>                                        Our Team                                      </a>                                    </span>                                  </td>                                </tr>                              </tbody>                            </table>                            <!--[if mso]></td></tr></table><![endif]-->                          </td>                        </tr>                      </tbody>                    </table>                    <!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]-->                  </td>                </tr>                <tr>                  <td valign='top' align='center' style='background-color:#000000;'>                    <!--[if (gte mso 9)|(IE)]><table width='100%' align='center' cellpadding='0' cellspacing='0' border='0'><tr><td valign='top'><![endif]-->                    <table border='0' cellpadding='0' cellspacing='0' align='center' style='margin:0 auto'>                      <tbody>                        <tr>                          <td>                            <!--[if mso]><table align='center' border='0' cellspacing='0' cellpadding='0'><tr><td align='center' valign='top'><![endif]-->                            <table align='left' border='0' cellpadding='0' cellspacing='0'>                              <tbody>                                <tr>                                  <td align='center' valign='middle' style='padding-top:5px;padding-bottom:5px;padding-left:5px;padding-right:5px'>                                    <a href='https://www.facebook.com/CryptoCurve/'>                                      <img src='http://www.eventcloud.co/img/cc-facebook.jpg' style='width:30px;height:30px;font-size:12px;color:#333333;border:none;border-width:0px;border-style:none;' alt='Facebook' width='30' height='30'>                                    </a>                                  </td>                                </tr>                              </tbody>                            </table>                            <!--[if mso]></td><td align='center' valign='top'><![endif]-->                            <table align='left' border='0' cellpadding='0' cellspacing='0'>                              <tbody>                                <tr>                                  <td align='center' valign='middle' style='padding-top:5px;padding-bottom:5px;padding-left:5px;padding-right:5px'>                                    <a href='https://twitter.com/crypto_curve'>                                      <img src='http://www.eventcloud.co/img/cc-twitter.jpg' style='width:30px;height:30px;font-size:12px;color:#333333;border:none;border-width:0px;border-style:none;' alt='Twitter' width='30' height='30'>                                    </a>                                  </td>                                </tr>                              </tbody>                            </table>                            <!--[if mso]></td><td align='center' valign='top'><![endif]-->                            <table align='left' border='0' cellpadding='0' cellspacing='0'>                              <tbody>                                <tr>                                  <td align='center' valign='middle' style='padding-top:5px;padding-bottom:5px;padding-left:5px;padding-right:5px'>                                    <a href='https://www.youtube.com/channel/UCigZGGPIGN9aLvhY1_3QSCQ'>                                      <img src='http://www.eventcloud.co/img/cc-youtube.jpg' style='width:30px;height:30px;font-size:12px;color:#333333;border:none;border-width:0px;border-style:none;' alt='YouTube' width='30' height='30'>                                    </a>                                  </td>                                </tr>                              </tbody>                            </table>                            <!--[if mso]></td><td align='center' valign='top'><![endif]-->                            <table align='left' border='0' cellpadding='0' cellspacing='0'>                              <tbody>                                <tr>                                  <td align='center' valign='middle' style='padding-top:5px;padding-bottom:5px;padding-left:5px;padding-right:5px'>                                    <a href='https://t.me/cryptocurve'>                                      <img src='http://www.eventcloud.co/img/cc-telegram.jpg' style='width:30px;height:30px;font-size:12px;color:#333333;border:none;border-width:0px;border-style:none;' alt='Telegram' width='30' height='30'>                                    </a>                                  </td>                                </tr>                              </tbody>                            </table>                            <!--[if mso]></td><td align='center' valign='top'><![endif]-->                            <table align='left' border='0' cellpadding='0' cellspacing='0'>                              <tbody>                                <tr>                                  <td align='center' valign='middle' style='padding-top:5px;padding-bottom:5px;padding-left:5px;padding-right:5px'>                                    <a href='https://medium.com/@Cryptocurve'>                                      <img src='http://www.eventcloud.co/img/cc-medium.jpg' style='width:30px;height:30px;font-size:12px;color:#333333;border:none;border-width:0px;border-style:none;' alt='Medium' width='30' height='30'>                                    </a>                                  </td>                                </tr>                              </tbody>                            </table>                            <!--[if mso]></td><td align='center' valign='top'><![endif]-->                            <table align='left' border='0' cellpadding='0' cellspacing='0'>                              <tbody>                                <tr>                                  <td align='center' valign='middle' style='padding-top:5px;padding-bottom:5px;padding-left:5px;padding-right:5px'>                                    <a href='mailto:support@cryptocurve.io'>                                      <img src='http://www.eventcloud.co/img/cc-mail.jpg' style='width:30px;height:30px;font-size:12px;color:#333333;border:none;border-width:0px;border-style:none;' alt='Mail' width='30' height='30'>                                    </a>                                  </td>                                </tr>                              </tbody>                            </table>                            <!--[if mso]></td></tr></table><![endif]-->                          </td>                        </tr>                      </tbody>                    </table>                    <!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]-->                  </td>                </tr>              </tbody>            </table>            <!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]-->          </td>        </tr>      </tbody>    </table>  </body></html>"
 
 var nodemailer = require('nodemailer');
@@ -367,54 +370,67 @@ const model = {
             res.body = { 'status': 404, 'success': false, 'message': 'User not found' }
             return next(null, req, res, next)
           } else {
-            if (validatePassword(user.PasswordHash, data.password)) {
-              if (!user.State) {
-                user.State =  {
-                  user: {
-                    emailAddress: user.EmailAddress,
-                    maxAllocation: user.Allocation,
-                    remainingAllocation: user.Allocation,
-                    totalAllocation: 0,
-                    whitelisted: true,
-                    canWhitelist: true
-                  },
-                  termsAndConditions: {
-                    accepted: null,
-                  },
-                  ethAddress: {
-                    publicAddress: user.EthereumAddress,
-                    publicAddressName: null,
-                    privateKey: null,
-                    privateKeyPassword: null,
-                    mnemonic: null,
-                    mnemonicPassword: null,
-                    jsonv3: null,
-                    jsonv3Password: null
-                  },
-                  wanAddress: {
-                    publicAddress: user.WanchainAddress,
-                    publicAddressName: null,
-                    privateKey: null,
-                    privateKeyPassword: null,
-                    mnemonic:null,
-                    mnemonicPassword: null,
-                    jsonv3: null,
-                    jsonv3Password: null
-                  },
-                  kyc: {
-                    idDocumentUuid: null,
-                    photoUuid: null
-                  },
-                  currentScreen: 'acceptTermsAndConditions'
-                }
+            if (!data.password) {
+              user.State =  {
+                user: {
+                  emailAddress: user.EmailAddress,
+                  whitelisted: true,
+                  canWhitelist: true
+                },
               }
               res.status(205)
               res.body = { 'status': 200, 'success': true, 'message': signData(user.State) }
               return next(null, req, res, next)
             } else {
-              res.status(401)
-              res.body = { 'status': 401, 'success': false, 'message': 'Invalid Credentials' }
-              return next(null, req, res, next)
+              if (validatePassword(user.PasswordHash, data.password)) {
+                if (!user.State) {
+                  user.State =  {
+                    user: {
+                      emailAddress: user.EmailAddress,
+                      maxAllocation: user.Allocation,
+                      remainingAllocation: user.Allocation,
+                      totalAllocation: 0,
+                      whitelisted: true,
+                      canWhitelist: true
+                    },
+                    termsAndConditions: {
+                      accepted: null,
+                    },
+                    ethAddress: {
+                      publicAddress: user.EthereumAddress,
+                      publicAddressName: null,
+                      privateKey: null,
+                      privateKeyPassword: null,
+                      mnemonic: null,
+                      mnemonicPassword: null,
+                      jsonv3: null,
+                      jsonv3Password: null
+                    },
+                    wanAddress: {
+                      publicAddress: user.WanchainAddress,
+                      publicAddressName: null,
+                      privateKey: null,
+                      privateKeyPassword: null,
+                      mnemonic:null,
+                      mnemonicPassword: null,
+                      jsonv3: null,
+                      jsonv3Password: null
+                    },
+                    kyc: {
+                      idDocumentUuid: null,
+                      photoUuid: null
+                    },
+                    currentScreen: 'acceptTermsAndConditions'
+                  }
+                }
+                res.status(205)
+                res.body = { 'status': 200, 'success': true, 'message': signData(user.State) }
+                return next(null, req, res, next)
+              } else {
+                res.status(401)
+                res.body = { 'status': 401, 'success': false, 'message': 'Invalid Credentials' }
+                return next(null, req, res, next)
+              }
             }
 
           }
