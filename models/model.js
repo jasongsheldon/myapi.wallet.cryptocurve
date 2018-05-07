@@ -489,7 +489,7 @@ const model = {
         return next(null, req, res, next)
       }
       if (data.emailAddress) {
-        db.oneOrNone('select * from "PresaleWhitelistParticipants" pwp, "AspNetUsers" anu where pwp."EmailAddress" = anu."Email" and pwp."EmailAddress" = $1',
+        db.oneOrNone('select * from "PresaleWhitelistParticipants" pwp left outer join "AspNetUsers" anu on pwp."EmailAddress" = anu."Email" where pwp."EmailAddress" = $1',
         [data.emailAddress])
         .then(function(user) {
           console.log(user)
