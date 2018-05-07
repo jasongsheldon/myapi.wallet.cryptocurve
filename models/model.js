@@ -27,6 +27,23 @@ var transporter = nodemailer.createTransport({
   }
 });
 
+function genToken(user) {
+  var expires = expiresIn(7) // 7 days
+  var token = jwt.encode({
+    exp: expires,
+    user: user
+  }, require('../config/secret')())
+  return {
+    token: token,
+    expires: expires,
+    user: user
+  }
+}
+function expiresIn(numDays) {
+  var dateObj = new Date()
+  return dateObj.setDate(dateObj.getDate() + numDays)
+}
+
 function decryptPrivKey(encprivkey, password) {
   console.log(encprivkey)
   const cipher = encprivkey.slice(0, 128);
@@ -238,6 +255,47 @@ function signData(data) {
   return signData
 }
 
+function getFreshState(user) {
+  return {
+    user: {
+      emailAddress: user.EmailAddress,
+      maxAllocation: user.Allocation,
+      remainingAllocation: user.Allocation,
+      totalAllocation: 0,
+      whitelisted: true,
+      canWhitelist: true
+    },
+    termsAndConditions: {
+      accepted: null,
+    },
+    ethAddress: {
+      publicAddress: user.EthereumAddress,
+      publicAddressName: null,
+      privateKey: null,
+      privateKeyPassword: null,
+      mnemonic: null,
+      mnemonicPassword: null,
+      jsonv3: null,
+      jsonv3Password: null
+    },
+    wanAddress: {
+      publicAddress: user.WanchainAddress,
+      publicAddressName: null,
+      privateKey: null,
+      privateKeyPassword: null,
+      mnemonic:null,
+      mnemonicPassword: null,
+      jsonv3: null,
+      jsonv3Password: null
+    },
+    kyc: {
+      idDocumentUuid: null,
+      photoUuid: null
+    },
+    currentScreen: 'acceptTermsAndConditions'
+  }
+}
+
 const model = {
   ethPrivateKeyUnlock(req, res, next) {
     console.log(req.body)
@@ -370,6 +428,7 @@ const model = {
             res.body = { 'status': 404, 'success': false, 'message': 'User not found' }
             return next(null, req, res, next)
           } else {
+            /* No password provided, this is a registration check */
             if (!data.password) {
               user.State =  {
                 user: {
@@ -381,47 +440,14 @@ const model = {
               res.status(205)
               res.body = { 'status': 200, 'success': true, 'message': signData(user.State) }
               return next(null, req, res, next)
+            /* password has been provided, this is a on login request */s
             } else {
               if (validatePassword(user.PasswordHash, data.password)) {
+                if (!data.State) {
+
+                }
                 if (!user.State) {
-                  user.State =  {
-                    user: {
-                      emailAddress: user.EmailAddress,
-                      maxAllocation: user.Allocation,
-                      remainingAllocation: user.Allocation,
-                      totalAllocation: 0,
-                      whitelisted: true,
-                      canWhitelist: true
-                    },
-                    termsAndConditions: {
-                      accepted: null,
-                    },
-                    ethAddress: {
-                      publicAddress: user.EthereumAddress,
-                      publicAddressName: null,
-                      privateKey: null,
-                      privateKeyPassword: null,
-                      mnemonic: null,
-                      mnemonicPassword: null,
-                      jsonv3: null,
-                      jsonv3Password: null
-                    },
-                    wanAddress: {
-                      publicAddress: user.WanchainAddress,
-                      publicAddressName: null,
-                      privateKey: null,
-                      privateKeyPassword: null,
-                      mnemonic:null,
-                      mnemonicPassword: null,
-                      jsonv3: null,
-                      jsonv3Password: null
-                    },
-                    kyc: {
-                      idDocumentUuid: null,
-                      photoUuid: null
-                    },
-                    currentScreen: 'acceptTermsAndConditions'
-                  }
+                  user.State =  getFreshState(user)
                 }
                 res.status(205)
                 res.body = { 'status': 200, 'success': true, 'message': signData(user.State) }
@@ -448,8 +474,10 @@ const model = {
         /* Check password */
 
 
-      } else if (data.state) {
-        /* Save the state */
+      } else {
+        res.status(400)
+        res.body = { 'status': 400, 'success': false, 'message': 'Bad Request' }
+        return next(null, req, res, next)
       }
 
       /*db.none('insert into PresaleWhitelistParticipants (uuid, emailAddress, ethereumAddress, wanchainAddress, json, created) values (md5(random()::text || clock_timestamp()::text)::uuid, $1, $2, $3, $4, NOW());',

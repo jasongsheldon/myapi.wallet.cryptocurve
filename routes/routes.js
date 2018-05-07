@@ -2,6 +2,7 @@ var express = require('express')
 var router = express.Router()
 var model = require('../models/model.js')
 var bodyParser = require('body-parser')
+const sha256 = require('sha256')
 
 const aws = require('aws-sdk')
 const multer = require("multer")
@@ -31,12 +32,12 @@ router.get('/', function (req, res, next) {
 })
 router.post('/api/v1/uploadFileKYC', upload.single('kyc'), function(req, res, next) {
   res.status(205)
-  res.body = { 'status': 200, 'success': true, 'message': 'Uploaded' }
+  res.body = { 'status': 200, 'success': true, 'uuid': sha256(req.file.key) }
   return next(null, req, res, next)
 })
 router.post('/api/v1/uploadFileID', upload.single('id'), function(req, res, next) {
   res.status(205)
-  res.body = { 'status': 200, 'success': true, 'message': 'Uploaded' }
+  res.body = { 'status': 200, 'success': true, 'uuid': sha256(req.file.key) }
   return next(null, req, res, next)
 })
 
