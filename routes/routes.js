@@ -18,7 +18,8 @@ var upload = multer({
       cb(null, {fieldName: file.fieldname});
     },
     key: function (req, file, cb) {
-      cb(null, file.fieldname+"_"+file.originalname+"_"+Date.now().toString())
+      console.log(req.query)
+      cb(null, file.fieldname+"_"+file.originalname+"_"+req.query.emailAddress+"_"+Date.now().toString())
     }
   })
 })
@@ -28,8 +29,12 @@ router.get('/', function (req, res, next) {
   res.status(400)
   next(null, req, res, next)
 })
-
-router.post('/api/v1/uploadFile', upload.single('kyc'), function(req, res, next) {
+router.post('/api/v1/uploadFileKYC', upload.single('kyc'), function(req, res, next) {
+  res.status(205)
+  res.body = { 'status': 200, 'success': true, 'message': 'Uploaded' }
+  return next(null, req, res, next)
+})
+router.post('/api/v1/uploadFileID', upload.single('id'), function(req, res, next) {
   res.status(205)
   res.body = { 'status': 200, 'success': true, 'message': 'Uploaded' }
   return next(null, req, res, next)
