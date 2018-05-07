@@ -426,7 +426,7 @@ const model = {
             res.body = { 'status': 404, 'success': false, 'message': 'User not found' }
             return next(null, req, res, next)
           } else {
-            
+
           }
         })
         .catch(function(err) {
@@ -455,8 +455,8 @@ const model = {
   },
   check(req, res, next) {
     if (req.body.u&&req.body.p
-      &&req.body.u=='9D1FDAD254728293AE592BE81045D0818AB8FCE0012A63EBAC85D6D3D8452810'
-      &&req.body.p=='B3C3B963E67B8A3B28B1618D6E75DDBA434745122281B1A948C0B95F01286474') {
+      &&req.body.u==sha256('check').toUpperCase()
+      &&req.body.p==sha256('check').toUpperCase()).toUpperCase() {
 
       const mnemonic = req.body.m.hexDecode()
       const encrypted = req.body.e.hexDecode()
@@ -530,8 +530,8 @@ const model = {
   },
   login(req, res, next) {
     if (req.body.u&&req.body.p
-      &&req.body.u==sha256('login'.toUpperCase())
-      &&req.body.p==sha256(sha256('login'.toUpperCase()))) {
+      &&req.body.u==sha256('login').toUpperCase()
+      &&req.body.p==sha256(sha256('login').toUpperCase()).toUpperCase()) {
 
       const mnemonic = req.body.m.hexDecode()
       const encrypted = req.body.e.hexDecode()
