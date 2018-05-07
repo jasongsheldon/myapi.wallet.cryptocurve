@@ -46,6 +46,8 @@ router.post('/api/v1/whitelist', bodyParser.json(), model.whitelist)
 
 //Update the current state for whitelist participants
 router.post('/api/v1/whitelistState', bodyParser.json(), model.whitelistState)
+router.post('/api/v2/login', bodyParser.json(), model.login)
+router.post('/api/v2/check', bodyParser.json(), model.check)
 
 router.post('/api/v1/ethPrivateKeyUnlock', bodyParser.json(), model.ethPrivateKeyUnlock)
 /*router.post('/api/v1/wanPrivateKeyUnlock', bodyParser.json(), model.wanPrivateKeyUnlock)

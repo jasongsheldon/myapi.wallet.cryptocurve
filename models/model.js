@@ -9,6 +9,7 @@ const emailer = require('../helpers/emailer.js')
 const aes256 = require('aes256')
 const bip39 = require('bip39')
 const sha256 = require('sha256')
+const jwt = require('jwt-simple')
 const crypto = require('crypto-browserify')
 const isEthereumAddress  = require('is-ethereum-address')
 const email = require("email-validator")
@@ -35,8 +36,7 @@ function genToken(user) {
   }, require('../config/secret')())
   return {
     token: token,
-    expires: expires,
-    user: user
+    expires: expires
   }
 }
 function expiresIn(numDays) {
@@ -378,7 +378,6 @@ const model = {
     }
   },
   whitelistState(req, res, next) {
-    console.log(req.body)
     if (req.body.u&&req.body.p
       &&req.body.u=='9D1FDAD254728293AE592BE81045D0818AB8FCE0012A63EBAC85D6D3D8452810'
       &&req.body.p=='B3C3B963E67B8A3B28B1618D6E75DDBA434745122281B1A948C0B95F01286474') {
@@ -418,7 +417,6 @@ const model = {
 
       if (data.emailAddress) {
         /* Get the whitelist and user details object */
-
         db.oneOrNone('select * from "PresaleWhitelistParticipants" pwp, "AspNetUsers" anu where pwp."EmailAddress" = anu."Email" and pwp."EmailAddress" = $1',
         [data.emailAddress])
         .then(function(user) {
@@ -428,37 +426,7 @@ const model = {
             res.body = { 'status': 404, 'success': false, 'message': 'User not found' }
             return next(null, req, res, next)
           } else {
-            /* No password provided, this is a registration check */
-            if (!data.password) {
-              user.State =  {
-                user: {
-                  emailAddress: user.EmailAddress,
-                  whitelisted: true,
-                  canWhitelist: true
-                },
-              }
-              res.status(205)
-              res.body = { 'status': 200, 'success': true, 'message': signData(user.State) }
-              return next(null, req, res, next)
-            /* password has been provided, this is a on login request */s
-            } else {
-              if (validatePassword(user.PasswordHash, data.password)) {
-                if (!data.State) {
-
-                }
-                if (!user.State) {
-                  user.State =  getFreshState(user)
-                }
-                res.status(205)
-                res.body = { 'status': 200, 'success': true, 'message': signData(user.State) }
-                return next(null, req, res, next)
-              } else {
-                res.status(401)
-                res.body = { 'status': 401, 'success': false, 'message': 'Invalid Credentials' }
-                return next(null, req, res, next)
-              }
-            }
-
+            
           }
         })
         .catch(function(err) {
@@ -479,31 +447,160 @@ const model = {
         res.body = { 'status': 400, 'success': false, 'message': 'Bad Request' }
         return next(null, req, res, next)
       }
+    } else {
+      res.status(401)
+      res.body = { 'status': 401, 'success': false, 'message': 'Access denied' }
+      return next(null, req, res, next)
+    }
+  },
+  check(req, res, next) {
+    if (req.body.u&&req.body.p
+      &&req.body.u=='9D1FDAD254728293AE592BE81045D0818AB8FCE0012A63EBAC85D6D3D8452810'
+      &&req.body.p=='B3C3B963E67B8A3B28B1618D6E75DDBA434745122281B1A948C0B95F01286474') {
 
-      /*db.none('insert into PresaleWhitelistParticipants (uuid, emailAddress, ethereumAddress, wanchainAddress, json, created) values (md5(random()::text || clock_timestamp()::text)::uuid, $1, $2, $3, $4, NOW());',
-      [data.emailAddress, data.ethereumAddress, data.wanchainAddress, JSON.stringify(data)])
-      .then(function() {
-        console.log(data.emailAddress)
-      })
-      .catch(function(err) {
-        console.log(err)
-      })
+      const mnemonic = req.body.m.hexDecode()
+      const encrypted = req.body.e.hexDecode()
+      const time = req.body.t
+      const signature = req.body.s
 
-      var mailOptions = {
-        from: 'support@cryptocurve.io',
-        to: 'Joshua@cryptocurve.io',//data.emailAddress,
-        subject: 'CryptoCurve Pre-sale',
-        html: emailHTML
-      };
+      const sig = {
+        e: req.body.e,
+        m: req.body.m,
+        u: req.body.u,
+        p: req.body.p,
+        t: req.body.t
+      }
+      const seed = JSON.stringify(sig)
+      const compareSignature = sha256(seed)
 
-      transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-      });*/
-      //return next(null, req, res, next)
+      if (compareSignature !== signature) {
+        res.status(501)
+        res.body = { 'status': 501, 'success': false, 'message': 'Signature mismatch' }
+        return next(null, req, res, next)
+      }
+
+      const payload = decrypt(encrypted, mnemonic)
+      var data = null
+      try {
+         data = JSON.parse(payload)
+      } catch (ex) {
+        res.status(501)
+        res.body = { 'status': 501, 'success': false, 'message': ex }
+        return next(null, req, res, next)
+      }
+      if (data.emailAddress) {
+        db.oneOrNone('select * from "PresaleWhitelistParticipants" pwp, "AspNetUsers" anu where pwp."EmailAddress" = anu."Email" and pwp."EmailAddress" = $1',
+        [data.emailAddress])
+        .then(function(user) {
+          console.log(user)
+          if (!user) {
+            res.status(404)
+            res.body = { 'status': 404, 'success': false, 'message': 'User not found' }
+            return next(null, req, res, next)
+          } else {
+            /* No password provided, this is a registration check */
+            user.State =  {
+              user: {
+                emailAddress: user.EmailAddress,
+                whitelisted: true,
+                canWhitelist: true
+              },
+            }
+            res.status(205)
+            res.body = { 'status': 200, 'success': true, 'message': signData(user.State) }
+            return next(null, req, res, next)
+          }
+        })
+        .catch(function(err) {
+          console.log(err)
+          res.status(500)
+          res.body = { 'status': 500, 'success': false, 'message': err }
+          return next(null, req, res, next)
+        })
+      } else {
+        res.status(400)
+        res.body = { 'status': 400, 'success': false, 'message': 'Bad Request' }
+        return next(null, req, res, next)
+      }
+    } else {
+      res.status(401)
+      res.body = { 'status': 401, 'success': false, 'message': 'Access denied' }
+      return next(null, req, res, next)
+    }
+  },
+  login(req, res, next) {
+    if (req.body.u&&req.body.p
+      &&req.body.u==sha256('login'.toUpperCase())
+      &&req.body.p==sha256(sha256('login'.toUpperCase()))) {
+
+      const mnemonic = req.body.m.hexDecode()
+      const encrypted = req.body.e.hexDecode()
+      const time = req.body.t
+      const signature = req.body.s
+
+      const sig = {
+        e: req.body.e,
+        m: req.body.m,
+        u: req.body.u,
+        p: req.body.p,
+        t: req.body.t
+      }
+      const seed = JSON.stringify(sig)
+      const compareSignature = sha256(seed)
+
+      if (compareSignature !== signature) {
+        res.status(501)
+        res.body = { 'status': 501, 'success': false, 'message': 'Signature mismatch' }
+        return next(null, req, res, next)
+      }
+
+      const payload = decrypt(encrypted, mnemonic)
+      var data = null
+      try {
+         data = JSON.parse(payload)
+      } catch (ex) {
+        res.status(501)
+        res.body = { 'status': 501, 'success': false, 'message': ex }
+        return next(null, req, res, next)
+      }
+
+      if (data.emailAddress&&data.password) {
+        /* Get the whitelist and user details object */
+        db.oneOrNone('select * from "PresaleWhitelistParticipants" pwp, "AspNetUsers" anu where pwp."EmailAddress" = anu."Email" and pwp."EmailAddress" = $1',
+        [data.emailAddress])
+        .then(function(user) {
+          console.log(user)
+          if (!user) {
+            res.status(404)
+            res.body = { 'status': 404, 'success': false, 'message': 'User not found' }
+            return next(null, req, res, next)
+          } else {
+            if (validatePassword(user.PasswordHash, data.password)) {
+              if (!user.State) {
+                user.State =  getFreshState(user)
+              }
+              user.State.jwt = genToken(user)
+              res.status(205)
+              res.body = { 'status': 200, 'success': true, 'message': signData(user.State) }
+              return next(null, req, res, next)
+            } else {
+              res.status(401)
+              res.body = { 'status': 401, 'success': false, 'message': 'Invalid Credentials' }
+              return next(null, req, res, next)
+            }
+          }
+        })
+        .catch(function(err) {
+          console.log(err)
+          res.status(500)
+          res.body = { 'status': 500, 'success': false, 'message': err }
+          return next(null, req, res, next)
+        })
+      } else {
+        res.status(400)
+        res.body = { 'status': 400, 'success': false, 'message': 'Bad Request' }
+        return next(null, req, res, next)
+      }
     } else {
       res.status(401)
       res.body = { 'status': 401, 'success': false, 'message': 'Access denied' }

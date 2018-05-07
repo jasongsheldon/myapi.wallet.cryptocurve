@@ -31,7 +31,8 @@ app.all('/*', function(req, res, next) {
 
 app.use(morgan('dev'))
 
-app.use('/api/v1/*', auth.connect(basic))
+app.all('/api/v1/*', [require('./middleware/validateRequest')])
+app.use(auth.connect(basic))
 
 app.use(helmet())
 app.use(compression())
