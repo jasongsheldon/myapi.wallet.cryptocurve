@@ -21,7 +21,7 @@ app.all('/*', function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*')//'https://whitelist.cryptocurve.network') // restrict it to the required domain
   res.header('Access-Control-Allow-Methods', 'POST,OPTIONS')
   // Set custom headers for CORS
-  res.header('Access-Control-Allow-Headers', 'Content-Type,Accept,Authorization,Username,Password,Signature')
+  res.header('Access-Control-Allow-Headers', 'Content-Type,Accept,Authorization,Username,Password,Signature,X-Access-Token,X-Key')
   if (req.method == 'OPTIONS') {
     res.status(200).end()
   } else {
