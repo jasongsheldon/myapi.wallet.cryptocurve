@@ -456,7 +456,7 @@ const model = {
   check(req, res, next) {
     if (req.body.u&&req.body.p
       &&req.body.u==(sha256('check').toUpperCase())
-      &&req.body.p==(sha256('check').toUpperCase()).toUpperCase()) {
+      &&req.body.p==(sha256(sha256('check').toUpperCase()).toUpperCase())) {
 
       const mnemonic = req.body.m.hexDecode()
       const encrypted = req.body.e.hexDecode()
