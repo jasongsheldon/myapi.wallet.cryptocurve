@@ -455,8 +455,8 @@ const model = {
   },
   check(req, res, next) {
     if (req.body.u&&req.body.p
-      &&req.body.u==sha256('check').toUpperCase()
-      &&req.body.p==sha256('check').toUpperCase()).toUpperCase() {
+      &&req.body.u==(sha256('check').toUpperCase())
+      &&req.body.p==(sha256('check').toUpperCase()).toUpperCase()) {
 
       const mnemonic = req.body.m.hexDecode()
       const encrypted = req.body.e.hexDecode()
@@ -530,8 +530,8 @@ const model = {
   },
   login(req, res, next) {
     if (req.body.u&&req.body.p
-      &&req.body.u==sha256('login').toUpperCase()
-      &&req.body.p==sha256(sha256('login').toUpperCase()).toUpperCase()) {
+      &&req.body.u==(sha256('login').toUpperCase())
+      &&req.body.p==(sha256(sha256('login').toUpperCase()).toUpperCase())) {
 
       const mnemonic = req.body.m.hexDecode()
       const encrypted = req.body.e.hexDecode()
