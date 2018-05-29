@@ -415,10 +415,9 @@ const model = {
 
       console.log(data)
 
-      if (data.emailAddress) {
-        /* Get the whitelist and user details object */
-        db.oneOrNone('select * from "PresaleWhitelistParticipants" pwp, "AspNetUsers" anu where pwp."EmailAddress" = anu."Email" and pwp."EmailAddress" = $1',
-        [data.emailAddress])
+      if (data.user.emailAddress) {
+        db.oneOrNone('select * from "PresaleWhitelistParticipants" pwp left outer join "AspNetUsers" anu on pwp."EmailAddress" = anu."Email" where pwp."EmailAddress" = $1',
+        [data.user.emailAddress])
         .then(function(user) {
           console.log(user)
           if (!user) {
@@ -426,7 +425,30 @@ const model = {
             res.body = { 'status': 404, 'success': false, 'message': 'User not found' }
             return next(null, req, res, next)
           } else {
-
+            db.one('insert into "PresaleWhitelistParticipantsState" ("Uuid","PresaleWhitelistParticipantUuid","State","Created") values (md5(random()::text || clock_timestamp()::text)::uuid, $1, $2, now()) returning "Uuid";',
+            [user.Uuid, data])
+            .then(function(d) {
+              console.log(d)
+              db.none('update "PresaleWhitelistParticipants" set "State" = $1 where "Uuid" = $2;',
+              [data, user.Uuid])
+              .then(function() {
+                res.status(205)
+                res.body = { 'status': 200, 'success': true }
+                return next(null, req, res, next)
+              })
+              .catch(function(err) {
+                console.log(err)
+                res.status(500)
+                res.body = { 'status': 500, 'success': false, 'message': err }
+                return next(null, req, res, next)
+              })
+            })
+            .catch(function(err) {
+              console.log(err)
+              res.status(500)
+              res.body = { 'status': 500, 'success': false, 'message': err }
+              return next(null, req, res, next)
+            })
           }
         })
         .catch(function(err) {
@@ -435,13 +457,6 @@ const model = {
           res.body = { 'status': 500, 'success': false, 'message': err }
           return next(null, req, res, next)
         })
-
-
-        /* Trigger the return only */
-
-        /* Check password */
-
-
       } else {
         res.status(400)
         res.body = { 'status': 400, 'success': false, 'message': 'Bad Request' }
