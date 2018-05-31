@@ -416,8 +416,8 @@ const model = {
       console.log(data)
 
       if (data.user.emailAddress) {
-        db.oneOrNone('select * from "PresaleWhitelistParticipants" pwp left outer join "AspNetUsers" anu on pwp."EmailAddress" = anu."Email" where pwp."EmailAddress" = $1',
-        [data.user.emailAddress])
+        db.oneOrNone('select * from "PresaleWhitelistParticipants" pwp left outer join "AspNetUsers" anu on lower(pwp."EmailAddress") = lower(anu."Email") where lower(pwp."EmailAddress") = $1',
+        [data.user.emailAddress.toLowerCase()])
         .then(function(user) {
           console.log(user)
           if (!user) {
@@ -504,8 +504,8 @@ const model = {
         return next(null, req, res, next)
       }
       if (data.emailAddress) {
-        db.oneOrNone('select * from "PresaleWhitelistParticipants" pwp left outer join "AspNetUsers" anu on pwp."EmailAddress" = anu."Email" where pwp."EmailAddress" = $1',
-        [data.emailAddress])
+        db.oneOrNone('select * from "PresaleWhitelistParticipants" pwp left outer join "AspNetUsers" anu on lower(pwp."EmailAddress") = lower(anu."Email") where lower(pwp."EmailAddress") = $1',
+        [data.emailAddress.toLowerCase()])
         .then(function(user) {
           console.log(user)
           if (!user) {
@@ -581,8 +581,8 @@ const model = {
 
       if (data.emailAddress&&data.password) {
         /* Get the whitelist and user details object */
-        db.oneOrNone('select * from "PresaleWhitelistParticipants" pwp, "AspNetUsers" anu where pwp."EmailAddress" = anu."Email" and pwp."EmailAddress" = $1',
-        [data.emailAddress])
+        db.oneOrNone('select * from "PresaleWhitelistParticipants" pwp, "AspNetUsers" anu where lower(pwp."EmailAddress") = lower(anu."Email") and lower(pwp."EmailAddress") = $1',
+        [data.emailAddress.toLowerCase()])
         .then(function(user) {
           console.log(user)
           if (!user) {
