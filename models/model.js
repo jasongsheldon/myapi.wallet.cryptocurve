@@ -609,7 +609,6 @@ const model = {
     }
   },
   whitelist(req, res, next) {
-    console.log(remoteAddress)
     if (req.body.u&&req.body.p
       &&req.body.u=='EDBBBA5EDFC477E59BBDE868B28AD698FA7065378A037737108453DD501A87B1'
       &&req.body.p=='5D866AD91A8A473215B4BF663A600BF8B4B4E4E1BEA3C725B7696DF119481947') {
@@ -657,9 +656,9 @@ const model = {
         s: req.socket.remoteAddress,
       }
 
-      if (data.email&&data.firstname&&data.surname&&data.telegram&&data.country) {
-        db.oneOrNone('insert into whitelist (uuid, firstname, surname, email, telegram, country, terms, created, payload, meta) values (md5(random()::text || clock_timestamp()::text)::uuid, $1, $2, $3, $4, $5, $6, now() $7, $8) returning uuid;',
-        [data.firstname, data.surname, data.email, data.telegram, data.country, data.terms, JSON.stringify(data), JSON.stringify(remoteAddress)])
+      if (data.email&&data.firstname&&data.surname&&data.country) {
+        db.oneOrNone('insert into whitelist (uuid, firstname, surname, email, telegram, country, terms, created, payload, meta) values (md5(random()::text || clock_timestamp()::text)::uuid, $1, $2, $3, $4, $5, $6, now(), $7, $8) returning uuid;',
+        [data.firstname, data.surname, data.email, data.telegram, data.country, data.terms, data, remoteAddress])
         .then(function(user) {
           res.status(205)
           res.body = { 'status': 200, 'success': true, 'message': signData(user) }
@@ -667,6 +666,9 @@ const model = {
         })
         .catch(function(err) {
           console.log(err)
+          res.status(500)
+          res.body = { 'status': 500, 'success': false, 'message': err }
+          return next(null, req, res, next)
         })
       } else {
         res.status(400)
