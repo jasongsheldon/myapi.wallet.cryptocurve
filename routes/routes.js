@@ -41,7 +41,7 @@ router.post('/api/v1/uploadFileID', upload.single('id'), function(req, res, next
 })
 
 //Add a new user to the whitelist.cryptocurve.network endpoint
-router.post('/api/v1/whitelist', bodyParser.json(), model.whitelist)
+router.post('/api/v2/whitelist', bodyParser.json(), model.whitelist)
 
 //Update the current state for whitelist participants
 router.post('/api/v1/whitelistState', bodyParser.json(), model.whitelistState)
