@@ -659,7 +659,7 @@ const model = {
 
       if (data.email&&data.firstname&&data.surname&&data.telegram&&data.country) {
         db.oneOrNone('insert into whitelist (uuid, firstname, surname, email, telegram, country, terms, created, payload, meta) values (md5(random()::text || clock_timestamp()::text)::uuid, $1, $2, $3, $4, $5, $6, now() $7, $8) returning uuid;',
-        [data.firstname, data.surname, data.email, data.telegram, data.country, data.terms, data, remoteAddress])
+        [data.firstname, data.surname, data.email, data.telegram, data.country, data.terms, JSON.stringify(data), JSON.stringify(remoteAddress)])
         .then(function(user) {
           res.status(205)
           res.body = { 'status': 200, 'success': true, 'message': signData(user) }
