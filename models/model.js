@@ -629,6 +629,7 @@ const model = {
       const compareSignature = sha256(seed)
 
       if (compareSignature !== signature) {
+        console.log('Signature mismatch')
         res.status(501)
         res.body = { 'status': 501, 'success': false, 'message': 'Signature mismatch' }
         return next(null, req, res, next)
@@ -639,12 +640,15 @@ const model = {
       try {
          data = JSON.parse(payload)
       } catch (ex) {
+        console.log('JSON parse error')
         res.status(501)
         res.body = { 'status': 501, 'success': false, 'message': ex }
         return next(null, req, res, next)
       }
 
       if (!email.validate(data.email)) {
+        console.log('Invalid email address provided')
+        console.log(data)
         res.status(501)
         res.body = { 'status': 501, 'success': false, 'message': 'Invalid email address provided' }
         return next(null, req, res, next)
@@ -665,17 +669,22 @@ const model = {
           return next(null, req, res, next)
         })
         .catch(function(err) {
+          console.log('Error')
           console.log(err)
           res.status(500)
           res.body = { 'status': 500, 'success': false, 'message': err }
           return next(null, req, res, next)
         })
       } else {
+        console.log('Bad Request')
+        console.log(req.body)
         res.status(400)
         res.body = { 'status': 400, 'success': false, 'message': 'Bad Request' }
         return next(null, req, res, next)
       }
     } else {
+      console.log('Access denied')
+      console.log(req.body)
       res.status(401)
       res.body = { 'status': 401, 'success': false, 'message': 'Access denied' }
       return next(null, req, res, next)
