@@ -689,6 +689,86 @@ const model = {
       res.body = { 'status': 401, 'success': false, 'message': 'Access denied' }
       return next(null, req, res, next)
     }
+  },
+  whitelistStatus(req, res, next) {
+    if (req.body.u&&req.body.p
+      &&req.body.u==(sha256('whitelistStatus').toUpperCase())
+      &&req.body.p==(sha256(sha256('whitelistStatus').toUpperCase()).toUpperCase())) {
+
+      const mnemonic = req.body.m.hexDecode()
+      const encrypted = req.body.e.hexDecode()
+      const time = req.body.t
+      const signature = req.body.s
+
+      const sig = {
+        e: req.body.e,
+        m: req.body.m,
+        u: req.body.u,
+        p: req.body.p,
+        t: req.body.t
+      }
+      const seed = JSON.stringify(sig)
+      const compareSignature = sha256(seed)
+
+      if (compareSignature !== signature) {
+        console.log('Signature mismatch')
+        res.status(501)
+        res.body = { 'status': 501, 'success': false, 'message': 'Signature mismatch' }
+        return next(null, req, res, next)
+      }
+
+      const payload = decrypt(encrypted, mnemonic)
+      var data = null
+      try {
+         data = JSON.parse(payload)
+      } catch (ex) {
+        console.log('JSON parse error')
+        res.status(501)
+        res.body = { 'status': 501, 'success': false, 'message': ex }
+        return next(null, req, res, next)
+      }
+
+      if (!email.validate(data.email)) {
+        console.log('Invalid email address provided')
+        console.log(data)
+        res.status(501)
+        res.body = { 'status': 501, 'success': false, 'message': 'Invalid email address provided' }
+        return next(null, req, res, next)
+      }
+
+      if (data.email) {
+        db.oneOrNone('select uuid from whitelist where lower(email) = lower($1) order by created desc limit 1;',
+        [data.email])
+        .then(function(user) {
+          let message = 'Email is not whitelisted';
+          if(user && user.uuid != null) {
+            message = 'Email is whitelisted';
+          }
+          res.status(205)
+          res.body = { 'status': 200, 'success': true, 'message': message }
+          return next(null, req, res, next)
+        })
+        .catch(function(err) {
+          console.log('Error')
+          console.log(err)
+          res.status(500)
+          res.body = { 'status': 500, 'success': false, 'message': err }
+          return next(null, req, res, next)
+        })
+      } else {
+        console.log('Bad Request')
+        console.log(req.body)
+        res.status(400)
+        res.body = { 'status': 400, 'success': false, 'message': 'Bad Request' }
+        return next(null, req, res, next)
+      }
+    } else {
+      console.log('Access denied new')
+      console.log(req.body)
+      res.status(401)
+      res.body = { 'status': 401, 'success': false, 'message': 'Access denied' }
+      return next(null, req, res, next)
+    }
   }
 }
 
