@@ -740,9 +740,9 @@ const model = {
         db.oneOrNone('select uuid from whitelist where lower(email) = lower($1) order by created desc limit 1;',
         [data.email])
         .then(function(user) {
-          let message = 'Email is not whitelisted';
+          let message = 'This email has not been registered as a Whitelist candidate.';
           if(user && user.uuid != null) {
-            message = 'Email is whitelisted';
+            message = 'This email has been registered as a Whitelist candidate. You will be emailed once your Whitelist status has been approved.';
           }
           res.status(205)
           res.body = { 'status': 200, 'success': true, 'message': message }
