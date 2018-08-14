@@ -769,6 +769,22 @@ const model = {
       res.body = { 'status': 401, 'success': false, 'message': 'Access denied' }
       return next(null, req, res, next)
     }
+  },
+  verificationCallback(req, res, next) {
+    db.none('insert into verificationresults (uuid, payload) values (md5(random()::text || clock_timestamp()::text)::uuid, $1);',
+    [req.body])
+    .then(function(){
+      res.status(205)
+      res.body = { 'status': 200, 'success': true, 'message': 'Accepted' }
+      return next(null, req, res, next)
+    })
+    .catch(function(err) {
+      console.log('Error')
+      console.log(err)
+      res.status(500)
+      res.body = { 'status': 500, 'success': false, 'message': err }
+      return next(null, req, res, next)
+    })
   }
 }
 

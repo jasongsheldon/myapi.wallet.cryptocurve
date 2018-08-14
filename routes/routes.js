@@ -58,4 +58,8 @@ router.post('/api/v1/wanJsonv3Unlock', bodyParser.json(), model.wanJsonv3Unlock)
 router.post('/api/v1/ethMnemonic', bodyParser.json(), model.ethMnemonic)
 router.post('/api/v1/wanMnemonic', bodyParser.json(), model.wanMnemonic)*/
 
+
+/* NETKI Integration Callback */
+router.post('/api/v2/verificationCallback', bodyParser.json(), model.verificationCallback)
+
 module.exports = router
