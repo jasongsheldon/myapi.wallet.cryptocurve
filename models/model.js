@@ -773,33 +773,34 @@ const model = {
   verificationCallback(req, res, next) {
 
     let transactionID = null
+    let clientID = null
+    let email = null
+    let phoneNumber = null
+    let countryCode = null
+    let state = null
 
     if(req.body && req.body.identity) {
       if(req.body.identity.id) {
         transactionID = req.body.identity.id
       }
 
-      let clientID = null
       if(req.body.identity.client) {
         clientID = req.body.identity.client
       }
 
-      let email = null
       if(req.body.identity.transaction_identity.identity_emails && req.body.identity.transaction_identity.identity_emails.length > 0) {
         email = req.body.identity.transaction_identity.iidentity_emails[0].email
       }
 
-      let phoneNumber = null
       if(req.body.identity.transaction_identity.identity_phone_numbers && req.body.identity.transaction_identity.identity_phone_numbers.length > 0) {
         phoneNumber = req.body.identity.transaction_identity.identity_phone_numbers[0].phone_number
       }
 
-      let countryCode = null
       if(req.body.identity.transaction_identity.identity_addresses && req.body.identity.transaction_identity.identity_addresses.length > 0) {
         countryCode = req.body.identity.transaction_identity.identity_addresses[0].country_code
       }
 
-      let state = req.body.identity.state
+      state = req.body.identity.state
     }
 
     db.none('insert into verificationresults (uuid, transactionuuid, clientuuid, payload, email, phonenumber, countrycode, state, created) values (md5(random()::text || clock_timestamp()::text)::uuid, $1, $2, $3, $4, $5, $6, $7, now());',
