@@ -771,18 +771,14 @@ const model = {
     }
   },
   verificationCallback(req, res, next) {
-    console.log('We are here')
-    db.none('insert into verificationresults (uuid, payload) values (md5(random()::text || clock_timestamp()::text)::uuid, $1);',
+    db.none('insert into verificationresults (uuid, payload, created) values (md5(random()::text || clock_timestamp()::text)::uuid, $1, now());',
     [req.body])
     .then(function(){
-      console.log('Done')
       res.status(205)
       res.body = { 'status': 200, 'success': true, 'message': 'Accepted' }
       return next(null, req, res, next)
     })
     .catch(function(err) {
-      console.log('Error')
-      console.log(err)
       res.status(500)
       res.body = { 'status': 500, 'success': false, 'message': err }
       return next(null, req, res, next)
