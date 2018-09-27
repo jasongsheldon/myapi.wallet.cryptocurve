@@ -784,8 +784,8 @@ const model = {
         transactionID = req.body.identity.id
       }
 
-      if(req.body.identity.client) {
-        clientID = req.body.identity.client
+      if(req.body.identity.transaction_metadata) {
+        clientID = req.body.identity.transaction_metadata.client_guid
       }
 
       if(req.body.identity.transaction_identity.identity_emails && req.body.identity.transaction_identity.identity_emails.length > 0) {
