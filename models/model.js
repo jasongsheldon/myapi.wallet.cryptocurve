@@ -580,6 +580,7 @@ const model = {
               if (!user.State) {
                 user.State =  getFreshState(user)
               }
+
               user.State.jwt = genToken(user)
               res.status(205)
               res.body = { 'status': 200, 'success': true, 'message': signData(user.State) }
@@ -771,7 +772,6 @@ const model = {
     }
   },
   verificationCallback(req, res, next) {
-
     let transactionID = null
     let clientID = null
     let email = null
@@ -784,7 +784,9 @@ const model = {
         transactionID = req.body.identity.id
       }
 
-      if(req.body.identity.transaction_metadata) {
+      if(req.body.identity.transaction_identity && req.body.identity.transaction_identity.client_guid!=null) {
+        clientID = req.body.identity.transaction_identity.client_guid
+      } else if(req.body.identity.transaction_metadata && req.body.identity.transaction_metadata.client_guid!=null) {
         clientID = req.body.identity.transaction_metadata.client_guid
       }
 
