@@ -808,9 +808,18 @@ const model = {
     db.none('insert into verificationresults (uuid, transactionuuid, clientuuid, payload, email, phonenumber, countrycode, state, created) values (md5(random()::text || clock_timestamp()::text)::uuid, $1, $2, $3, $4, $5, $6, $7, now());',
     [transactionID, clientID, req.body, email, phoneNumber, countryCode, state])
     .then(function(){
-      res.status(205)
-      res.body = { 'status': 200, 'success': true, 'message': 'Accepted' }
-      return next(null, req, res, next)
+      db.none('update verificationcodes set verification_result = $1 where service_code = $2;',
+      [state,  clientID])
+      .then(function(){
+        res.status(205)
+        res.body = { 'status': 200, 'success': true, 'message': 'Accepted' }
+        return next(null, req, res, next)
+      })
+      .catch(function(err) {
+        res.status(500)
+        res.body = { 'status': 500, 'success': false, 'message': err }
+        return next(null, req, res, next)
+      })
     })
     .catch(function(err) {
       res.status(500)
