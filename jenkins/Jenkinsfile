@@ -1,0 +1,23 @@
+
+node {
+  try {
+    stage('Checkout') {
+      checkout scm
+    }
+    stage('Environment') {
+      sh 'git --version'
+      echo "Branch: ${env.BRANCH_NAME}"
+      sh 'docker -v'
+      sh 'printenv'
+    }
+    stage('Deploy'){
+        sh 'docker build -t apiwallet --no-cache .'
+        sh 'docker tag apiwallet localhost:5000/apiwallet'
+        sh 'docker push localhost:5000/apiwallet'
+        sh 'docker rmi -f apiwallet localhost:5000/apiwallet'
+    }
+  }
+  catch (err) {
+    throw err
+  }
+}
