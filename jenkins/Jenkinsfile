@@ -12,9 +12,8 @@ node {
     }
     stage('Deploy'){
         sh 'docker build -t apiwallet --no-cache .'
-        sh 'docker tag apiwallet localhost:5000/apiwallet'
-        sh 'docker push localhost:5000/apiwallet'
-        sh 'docker rmi -f apiwallet localhost:5000/apiwallet'
+        sh 'docker tag apiwallet 577425357631.dkr.ecr.us-east-2.amazonaws.com/apiwallet'
+        sh 'docker push 577425357631.dkr.ecr.us-east-2.amazonaws.com/apiwallet'
     }
   }
   catch (err) {
